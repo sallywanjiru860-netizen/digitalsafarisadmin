@@ -2,12 +2,14 @@ import { useAuth } from '../../context/AuthContext';
 import { useDashboard } from '../../context/DashboardContext';
 import { formatCompact } from '../../utils/formatCurrency';
 import usePlatformConfig, { getPlatformAssetUrl } from '../../hooks/usePlatformConfig';
+import { Search } from 'lucide-react';
 
 interface AdminNavbarProps {
     onToggleSidebar?: () => void;
+    onOpenCommandPalette?: () => void;
 }
 
-const AdminNavbar = ({ onToggleSidebar }: AdminNavbarProps) => {
+const AdminNavbar = ({ onToggleSidebar, onOpenCommandPalette }: AdminNavbarProps) => {
     const { user, logout } = useAuth();
     const { stats } = useDashboard();
     const { config } = usePlatformConfig();
@@ -36,6 +38,17 @@ const AdminNavbar = ({ onToggleSidebar }: AdminNavbarProps) => {
                         </div>
                     </div>
                     <div className="flex items-center gap-3">
+                        <button
+                            type="button"
+                            onClick={onOpenCommandPalette}
+                            aria-label="Search admin pages"
+                            aria-keyshortcuts="Control+K Meta+K"
+                            className="inline-flex h-10 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 text-slate-600 transition-colors hover:bg-slate-100 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800"
+                        >
+                            <Search size={17} />
+                            <span className="hidden text-sm font-medium sm:inline">Search</span>
+                            <kbd className="hidden rounded-md border border-slate-200 bg-white px-1.5 py-0.5 text-[10px] font-semibold text-slate-500 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-400 md:inline">Ctrl K</kbd>
+                        </button>
                         <span className="hidden text-sm font-medium sm:block">{user?.firstName}</span>
                         <button onClick={logout} className="rounded-2xl border border-slate-200 bg-slate-100 px-3 py-2 text-xs font-semibold text-slate-700 transition-colors hover:bg-slate-200 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:hover:bg-slate-800">
                             Logout

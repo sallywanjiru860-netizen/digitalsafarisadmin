@@ -23,6 +23,7 @@ import BackupsPage from './pages/BackupsPage';
 import LegalPage from './pages/LegalPage';
 import PaymentsPage from './pages/PaymentsPage';
 import BrandingPage from './pages/BrandingPage';
+import AdminsPage from './pages/AdminsPage';
 
 const queryClient = new QueryClient({
     defaultOptions: {
@@ -84,6 +85,7 @@ const App = () => {
                                 <Route path="branding" element={<BrandingPage />} />
                                 <Route path="legal" element={<LegalPage />} />
                                 <Route path="payments" element={<PaymentsPage />} />
+                                <Route path="admins" element={<AdminsPage />} />
                             </Route>
                             <Route path="*" element={<Navigate to="/" replace />} />
                         </Routes>

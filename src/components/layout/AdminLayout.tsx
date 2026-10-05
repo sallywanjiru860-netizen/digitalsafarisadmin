@@ -1,11 +1,25 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import AdminSidebar from './AdminSidebar';
 import AdminNavbar from './AdminNavbar';
+import CommandPalette from './CommandPalette';
 
 const AdminLayout = () => {
     const [sidebarOpen, setSidebarOpen] = useState(false);
+    const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
     const [sidebarCollapsed, setSidebarCollapsed] = useState(() => localStorage.getItem('admin_sidebar_collapsed') === 'true');
+
+    useEffect(() => {
+        const handleShortcut = (event: KeyboardEvent) => {
+            if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') {
+                event.preventDefault();
+                setCommandPaletteOpen((open) => !open);
+            }
+        };
+
+        window.addEventListener('keydown', handleShortcut);
+        return () => window.removeEventListener('keydown', handleShortcut);
+    }, []);
 
     const toggleSidebarCollapse = () => {
         setSidebarCollapsed((current) => {
@@ -17,7 +31,10 @@ const AdminLayout = () => {
 
     return (
         <div className="min-h-screen bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 transition-colors">
-            <AdminNavbar onToggleSidebar={() => setSidebarOpen(true)} />
+            <AdminNavbar
+                onToggleSidebar={() => setSidebarOpen(true)}
+                onOpenCommandPalette={() => setCommandPaletteOpen(true)}
+            />
 
             <div className="flex h-[calc(100vh-65px)] min-h-[calc(100vh-65px)] flex-col overflow-hidden lg:flex-row">
                 <aside className={`hidden lg:block lg:shrink-0 transition-all duration-300 ease-in-out ${sidebarCollapsed ? 'lg:w-20' : 'lg:w-72'}`}>
@@ -60,6 +77,7 @@ const AdminLayout = () => {
                     </div>
                 </div>
             </aside>
+            <CommandPalette open={commandPaletteOpen} onClose={() => setCommandPaletteOpen(false)} />
         </div>
     );
 };

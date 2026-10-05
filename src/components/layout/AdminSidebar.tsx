@@ -1,4 +1,6 @@
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { LogOut, UsersRound } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
 import { cn } from '../../utils/helpers';
 import {
     DashboardIcon,
@@ -40,6 +42,7 @@ const navGroups = [
             { to: '/payments', label: 'Payments', icon: <PaymentsIcon size={20} /> },
             { to: '/disputes', label: 'Disputes', icon: <DisputesIcon size={20} /> },
             { to: '/backups', label: 'Backups', icon: <BackupsIcon size={20} /> },
+            { to: '/admins', label: 'Administrators', icon: <UsersRound size={20} /> },
         ],
     },
     {
@@ -52,8 +55,18 @@ const navGroups = [
     },
 ];
 
-const AdminSidebar = ({ onNavigate, className = '', collapsed = false, onToggleCollapse }: AdminSidebarProps) => (
-    <aside className={cn('h-full overflow-y-auto rounded-[28px] border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-950 transition-all duration-300 ease-in-out', className)}>
+const AdminSidebar = ({ onNavigate, className = '', collapsed = false, onToggleCollapse }: AdminSidebarProps) => {
+    const { logout } = useAuth();
+    const navigate = useNavigate();
+
+    const handleLogout = () => {
+        logout();
+        onNavigate?.();
+        navigate('/login', { replace: true });
+    };
+
+    return (
+    <aside className={cn('flex h-full flex-col overflow-y-auto rounded-[28px] border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-950 transition-all duration-300 ease-in-out', className)}>
         <div className={cn('sticky top-0 z-10 border-b border-slate-200 bg-white/95 backdrop-blur dark:border-slate-800 dark:bg-slate-950/95 transition-all duration-300', collapsed ? 'px-3 py-4' : 'px-4 py-5 lg:px-5')}>
             <div className="flex items-center justify-between gap-2">
                 {!collapsed ? (
@@ -79,7 +92,7 @@ const AdminSidebar = ({ onNavigate, className = '', collapsed = false, onToggleC
                 )}
             </div>
         </div>
-        <nav className={cn('space-y-4 transition-all duration-300', collapsed ? 'p-2' : 'px-4 py-4 lg:px-5')}>
+        <nav className={cn('flex-1 space-y-4 transition-all duration-300', collapsed ? 'p-2' : 'px-4 py-4 lg:px-5')}>
             {navGroups.map((group) => (
                 <div key={group.title} className="space-y-3">
                     {!collapsed && (
@@ -115,7 +128,25 @@ const AdminSidebar = ({ onNavigate, className = '', collapsed = false, onToggleC
                 </div>
             ))}
         </nav>
+        <div className={cn('border-t border-slate-200 dark:border-slate-800', collapsed ? 'p-2' : 'px-4 py-4 lg:px-5')}>
+            <button
+                type="button"
+                onClick={handleLogout}
+                title={collapsed ? 'Logout' : undefined}
+                aria-label="Logout"
+                className={cn(
+                    'flex w-full items-center gap-3 rounded-2xl text-sm font-semibold text-rose-700 transition-colors hover:bg-rose-50 dark:text-rose-300 dark:hover:bg-rose-950/40',
+                    collapsed ? 'justify-center px-2 py-2' : 'px-3 py-3 sm:px-4'
+                )}
+            >
+                <span className={cn('inline-flex shrink-0 items-center justify-center rounded-xl bg-rose-100 dark:bg-rose-950/60', collapsed ? 'h-9 w-9' : 'h-10 w-10')}>
+                    <LogOut size={19} />
+                </span>
+                {!collapsed && <span>Logout</span>}
+            </button>
+        </div>
     </aside>
-);
+    );
+};
 
 export default AdminSidebar;
