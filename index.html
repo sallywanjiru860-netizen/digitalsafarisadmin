@@ -1,28 +1,20 @@
-<!DOCTYPE html>
-<html lang="en" class="dark">
-<head>
+<!doctype html>
+<html lang="en">
+  <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <title>DigitalSafaris - Admin</title>
-</head>
-<body class="bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 antialiased transition-colors">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Digital Safaris — Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
     <div id="root"></div>
-    <script>
-        if ('%MODE%' === 'production') {
-            if (window.__REACT_DEVTOOLS_GLOBAL_HOOK__) {
-                window.__REACT_DEVTOOLS_GLOBAL_HOOK__.isDisabled = true;
-            }
-            document.addEventListener('contextmenu', (event) => event.preventDefault());
-            document.addEventListener('keydown', (event) => {
-                if (event.key === 'F12' ||
-                    (event.ctrlKey && event.shiftKey && ['I', 'J', 'C'].includes(event.key.toUpperCase())) ||
-                    (event.ctrlKey && event.key.toUpperCase() === 'U')) {
-                    event.preventDefault();
-                }
-            });
-        }
-    </script>
     <script type="module" src="/src/main.tsx"></script>
-</body>
+  </body>
 </html>

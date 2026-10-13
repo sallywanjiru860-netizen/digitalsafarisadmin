@@ -1,41 +1,61 @@
-import { api } from './axios';
+import axios, { unwrap } from "./axios";
+import type { Location, LocationType } from "../types";
 
-export const getTowns = async (params?: any) => {
-    const res = await api.get('/admin/locations/towns', { params });
-    return res.data;
+interface ListParams {
+  type?: LocationType;
+  search?: string;
+  isOperational?: "true" | "false";
+  parent?: string;
+}
+
+interface CreatePayload {
+  name: string;
+  type: LocationType;
+  parent?: string | null;
+  countryCode: string;
+  county?: string | null;
+  latitude?: number | null;
+  longitude?: number | null;
+  radiusKm?: number;
+  timezone?: string;
+  currency?: string;
+  isOperational?: boolean;
+  isDefault?: boolean;
+}
+
+const locationApi = {
+  async list(params?: ListParams): Promise<Location[]> {
+    const res = await axios.get("/admin/locations", { params });
+    const body = unwrap<Location[] | { items: Location[] }>(res.data);
+    if (Array.isArray(body)) return body;
+    return (body as { items: Location[] }).items ?? [];
+  },
+
+  async details(id: string): Promise<{ location: Location; children: Location[] }> {
+    const res = await axios.get(`/admin/locations/${id}`);
+    return unwrap<{ location: Location; children: Location[] }>(res.data);
+  },
+
+  async create(payload: CreatePayload): Promise<Location> {
+    const res = await axios.post("/admin/locations", payload);
+    return unwrap<Location>(res.data);
+  },
+
+  async update(id: string, payload: Partial<CreatePayload>): Promise<Location> {
+    const res = await axios.patch(`/admin/locations/${id}`, payload);
+    return unwrap<Location>(res.data);
+  },
+
+  async remove(id: string): Promise<void> {
+    await axios.delete(`/admin/locations/${id}`);
+  },
+
+  async toggleOperational(
+    id: string
+  ): Promise<{ isOperational: boolean }> {
+    const res = await axios.post(`/admin/locations/${id}/toggle-operational`);
+    return unwrap<{ isOperational: boolean }>(res.data);
+  },
 };
 
-export const createTown = async (data: { name: string; region?: string }) => {
-    const res = await api.post('/admin/locations/towns', data);
-    return res.data;
-};
-
-export const updateTown = async (id: string, data: any) => {
-    const res = await api.put(`/admin/locations/towns/${id}`, data);
-    return res.data;
-};
-
-export const deleteTown = async (id: string) => {
-    const res = await api.delete(`/admin/locations/towns/${id}`);
-    return res.data;
-};
-
-export const getDestinations = async (params?: any) => {
-    const res = await api.get('/admin/locations/destinations', { params });
-    return res.data;
-};
-
-export const createDestination = async (data: { town: string; name: string; type?: string }) => {
-    const res = await api.post('/admin/locations/destinations', data);
-    return res.data;
-};
-
-export const updateDestination = async (id: string, data: any) => {
-    const res = await api.put(`/admin/locations/destinations/${id}`, data);
-    return res.data;
-};
-
-export const deleteDestination = async (id: string) => {
-    const res = await api.delete(`/admin/locations/destinations/${id}`);
-    return res.data;
-};
+export default locationApi;
